@@ -1,12 +1,12 @@
-#pragma once
+
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "framework.h"
 #include <stdio.h>
 
-extern "C" __declspec(dllexport) int Information(char* InfoString)
+extern "C" __declspec(dllexport) int Information(char *InfoString)
 {
-	int keybord_type = GetKeyboardType(0); // Функция получения информации о типе клавиатуры
+	int keybord_type = GetKeyboardType(0); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	switch (keybord_type)
 	{
 	case 0x4:
