@@ -5,18 +5,18 @@
 using namespace std;
 
 LOGFONT lfcreator, lfres;
-HFONT crFont, resFont;
-HWND startButton;  // дескриптор кнопки
-char info[35];     // массив, куда будет передана информация в функции из DLL
-char crStr[35] = "Created by Vladimir Galstyan PM-93";
+HFONT MyNameFont, ResultFont;
+HWND startButton;  // Дескриптор кнопки
+char Result[100];     // Сюда будет записан результат работы фукнции из библиотеки DLL
+char MyName[35] = "Created by Vladimir Galstyan PM-93";
 
 DWORD WINAPI ThreadFunc(void*)
 {
     typedef int(*ImportFunction)(char*);
     ImportFunction DLLInfo;
-    HINSTANCE hinstLib = LoadLibrary(TEXT("info.dll"));                 // загружаем динамическую библиотеку
+    HINSTANCE hinstLib = LoadLibrary(TEXT("info.dll"));                 // загружаем библиотеку
     DLLInfo = (ImportFunction)GetProcAddress(hinstLib, "Information");  // получаем адрес экспортируемой функции
-    DLLInfo(info);                                                      // вызываем функцию из динамической библиотеки
+    DLLInfo(Result);                                                      // вызываем функцию
     FreeLibrary(hinstLib);                                              // освобождаем модуль загруженной DLL
     return 0;
 }
@@ -30,7 +30,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
         case WM_CREATE:
         {
            DWORD IDThread;
-           // создаем поток и получаем его дескриптор
+           // Создаем поток и получаем его дескриптор
            HANDLE hThread = CreateThread(
               NULL,
               0,
@@ -38,15 +38,15 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
               NULL,
               0,
               &IDThread);
-           WaitForSingleObject(hThread, INFINITE); // бесконечно ожидаем завершение потока
-           CloseHandle(hThread);                   // закрываем поток
+           WaitForSingleObject(hThread, INFINITE); // Ждем завершение потока
+           CloseHandle(hThread);                   // Закрываем поток
            break;
         }
         case WM_PAINT: // при необходимости отрисовать часть окна
-           // начинаем отрисовку приложения
+           // Отрисовка приложения
            hDC = BeginPaint(hWnd, &ps);
 
-           // определяем атрибуты для шрифтов
+           // Определяем характеристики шрифта
            lfcreator.lfHeight = 25;
            lfcreator.lfWeight = 600;
 
@@ -55,20 +55,21 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
            lfres.lfWeight = 200;
            lfres.lfItalic = true;
 
-           // получаем шрифты на основе атрибутов
-           crFont = CreateFontIndirect(&lfcreator);
-           resFont = CreateFontIndirect(&lfres);
+           // Получаем шрифты
+           MyNameFont = CreateFontIndirect(&lfcreator);
+           ResultFont = CreateFontIndirect(&lfres);
            
-           SetBkMode(hDC, TRANSPARENT);                            // не изменеяем фон текстом
-           SelectObject(hDC, crFont);                      
-           TextOut(hDC, 200, 200, crStr, strlen(crStr));
-           SelectObject(hDC, resFont);
-           TextOut(hDC, 25, 80, info, strlen(info));
-           // заканчиваем отрисовку
-           EndPaint(hWnd, &ps);
+           // Текст не меняет фон
+           SetBkMode(hDC, TRANSPARENT);
+           SelectObject(hDC, MyNameFont);                      
+           TextOut(hDC, 200, 200, MyName, strlen(MyName));
+           SelectObject(hDC, ResultFont);
+           TextOut(hDC, 25, 80, Result, strlen(Result));
+           
+           EndPaint(hWnd, &ps); // Конец отрисовки
            break;
-        case WM_DESTROY:            // при закрытии окна
-            PostQuitMessage(0);     // делается запрос на завершение работы
+        case WM_DESTROY:            // Запрос на завершение работы
+            PostQuitMessage(0);    
             break;
         default: return DefWindowProc(hWnd, msg, wParam, lParam);
     }
@@ -91,19 +92,19 @@ int WINAPI WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, LPSTR str, int nWin
    wcl.cbClsExtra      =   0;
    wcl.style           =   CS_HREDRAW | CS_VREDRAW;
    wcl.cbWndExtra      =   0;
-   wcl.hbrBackground   =   CreateSolidBrush(RGB(255, 255, 255));    // цвет фона 
+   wcl.hbrBackground   =   CreateSolidBrush(RGB(255, 255, 255));    // Выбираем цвет фона
 
-   RegisterClass(&wcl); // регистрируем класс окна
+   RegisterClass(&wcl); // Регистрация класса окна
 
-   // создаем главное окно
+   // Создаем главное окно
    hWnd = CreateWindow(
         "RGZ",
-        "Keyboard",                                             // заголовок окна
-        WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,   // стили окна
+        "Keyboard",                                               // Заголовок окна
+        WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, // Стили окна
         // WS_OVERLAPPED - окно является перекрывающимся окном
         // WS_CAPTION - в окне есть строка заголовка
         // WS_MINIMIZEBOX - в окне есть кнопка свернуть.
-      GetSystemMetrics(SM_CXSCREEN) / 2 - 250, GetSystemMetrics(SM_CYSCREEN) / 2 - 150, 800, 300,       // окно создается в центре экрана с заданными размерами
+      GetSystemMetrics(SM_CXSCREEN) / 2 - 250, GetSystemMetrics(SM_CYSCREEN) / 2 - 150, 800, 300, // Окно создается в центре экрана с заданными размерами
         NULL,                                                      
         NULL,                                                      
         hThisInst,                                                 
@@ -111,7 +112,7 @@ int WINAPI WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, LPSTR str, int nWin
    
    ShowWindow(hWnd, nWinMode);
    UpdateWindow(hWnd);  
-   // обработчик сообщений
+   // Обрабатываем сообщения
    while (GetMessage(&msg, NULL, 0, 0))
    {  
        TranslateMessage(&msg);           
