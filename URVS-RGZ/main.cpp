@@ -1,7 +1,29 @@
-﻿// URVS-RGZ.cpp : Определяет точку входа для приложения.
-//
+﻿\
+#include "targetver.h"
+#include "Resource.h"
+// Файлы заголовков Windows
+#include <windows.h>
+// Файлы заголовков среды выполнения C
+#include <stdlib.h>
+#include <malloc.h>
+#include <memory.h>
+#include <tchar.h>
 
-#include "framework.h"
+
+#define IDS_APP_TITLE			103
+
+#define IDR_MAINFRAME			128
+#define IDD_URVSRGZ_DIALOG	102
+#define IDD_ABOUTBOX			103
+#define IDM_ABOUT				104
+#define IDM_EXIT				105
+#define IDI_URVSRGZ			107
+#define IDI_SMALL				108
+#define IDC_URVSRGZ			109
+#define IDC_MYICON				2
+#ifndef IDC_STATIC
+#define IDC_STATIC				-1
+#endif
 
 #define MAX_LOADSTRING 100
 
@@ -19,20 +41,15 @@ INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 // Переменная для вывода типа клавиатуры
 char Info[70];
 
+
 DWORD WINAPI ThreadFunc(void*)
 {
-    typedef int(*ImportFunc)(char*);
-    ImportFunc DLLInfo;
-    HINSTANCE hinstLib = LoadLibrary(TEXT("my_library.dll"));
-    if (hinstLib)
-    {
-        DLLInfo = (ImportFunc)GetProcAddress(hinstLib, "Information");
-        DLLInfo(Info);
-        FreeLibrary(hinstLib);
-    }
-    else {
-        strcpy_s(Info, "Kok");
-    }
+    typedef int(*ImportFunction)(char*);
+    ImportFunction DLLInfo;
+    HINSTANCE hinstLib = LoadLibrary(TEXT("info.dll"));                 // загружаем динамическую библиотеку
+    DLLInfo = (ImportFunction)GetProcAddress(hinstLib, "Information");  // получаем адрес экспортируемой функции
+    DLLInfo(info);                                                      // вызываем функцию из динамической библиотеки
+    FreeLibrary(hinstLib);                                              // освобождаем модуль загруженной DLL
     return 0;
 }
 
@@ -181,7 +198,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
-            TextOut(hdc, 20, 40, (LPCWSTR)Info, strlen(Info));
+            LPCWSTR InfoFunc = (LPCWSTR)Info;
+            TextOut(hdc, 20, 40, Info, strlen(Info));
             EndPaint(hWnd, &ps);
         }
         break;

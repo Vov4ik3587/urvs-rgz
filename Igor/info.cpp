@@ -1,27 +1,25 @@
 #include <windows.h>
 #include <stdio.h>
 
-extern "C" __declspec(dllexport) int Information(char *infoStr)
+extern "C" __declspec(dllexport) int Information(char *InfoString)
 {
-   SYSTEMTIME st;
-   int res = 0, day;
-   GetSystemTime(&st);  // получаем структуру SYSTEMTIME
-   day = st.wDay;  // получаем текущий день
-   __asm
-   {
-      mov ecx, 0
-      c:
-      mov eax, 4
-         push ecx       // сохран€ем ecx дл€ следующего вызова cpuid
-         cpuid
-         pop ecx
-         inc ecx
-         and eax, 31    // свер€ем младшие 5 бит eax с 2
-         cmp eax, 2     // если не равны, то увеличиваем ecx дл€ нового вызова cpuid
-         jne c          // если равны, то записываем младшие 12 бит ebx
-         and ebx, 4095
-         mov res, ebx
-   }
-   sprintf(infoStr, "Current day: %d, L1 Instr. line size: %d bytes", day, res + 1); // собираем строку дл€ вывода
-   return 0;
+	int keybord_type = GetKeyboardType(0); // ѕолучаем тип клавиатуры
+	switch (keybord_type)
+	{
+	case 0x4:
+		sprintf(InfoString, "This is enhanced keyboard which has 101 or 102 keys and Numpad(code %d)", keybord_type);
+		break;
+	case 0x7:
+		sprintf(InfoString, "This is Japanese keybord (code %d)", keybord_type);
+		break;
+	case 0x8:
+		sprintf(InfoString, "This is Korean keyboard (code %d)", keybord_type);
+		break;
+	case 0x51:
+		sprintf(InfoString, "Unknown type or HID keyboard (code %d)", keybord_type);
+		break;
+	default:
+		sprintf(InfoString, "Something's gone wrong (code %d)", keybord_type);
+		break;
+	}
 }

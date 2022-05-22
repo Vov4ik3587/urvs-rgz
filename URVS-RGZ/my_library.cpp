@@ -6,23 +6,23 @@
 
 extern "C" __declspec(dllexport) int Information(char *InfoString)
 {
-	int keybord_type = GetKeyboardType(0); // ������� ��������� ���������� � ���� ����������
+	int keybord_type = GetKeyboardType(0); // Получаем тип клавиатуры
 	switch (keybord_type)
 	{
 	case 0x4:
-		strcpy(InfoString, "This is enhanced keyboard which has 101 or 102 keys and Numpad");
+		sprintf(InfoString, "This is enhanced keyboard which has 101 or 102 keys and Numpad(code %d)", keybord_type);
 		break;
 	case 0x7:
-		strcpy(InfoString, "This is Japanese keybord");
+		sprintf(InfoString, "This is Japanese keybord (code %d)", keybord_type);
 		break;
 	case 0x8:
-		strcpy(InfoString, "This is Korean keyboard");
+		sprintf(InfoString, "This is Korean keyboard (code %d)", keybord_type);
 		break;
 	case 0x51:
-		strcpy(InfoString, "Unknown type or HID keyboard");
+		sprintf(InfoString, "Unknown type or HID keyboard (code %d)", keybord_type);
 		break;
 	default:
-		strcpy(InfoString, "Something's gone wrong");
+		sprintf(InfoString, "Something's gone wrong (code %d)", keybord_type);
 		break;
 	}
 

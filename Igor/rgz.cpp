@@ -8,7 +8,7 @@ LOGFONT lfcreator, lfres;
 HFONT crFont, resFont;
 HWND startButton;  // дескриптор кнопки
 char info[35];     // массив, куда будет передана информация в функции из DLL
-char crStr[28] = "Created by Igor Larin PM-93";
+char crStr[35] = "Created by Vladimir Galstyan PM-93";
 
 DWORD WINAPI ThreadFunc(void*)
 {
@@ -124,6 +124,4 @@ int WINAPI WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, LPSTR str, int nWin
    }
    return msg.wParam;
 }
-
-
 
