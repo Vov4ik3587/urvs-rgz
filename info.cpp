@@ -22,4 +22,5 @@ extern "C" __declspec(dllexport) int Information(char *InfoString)
 		sprintf(InfoString, "Something's gone wrong (code %d)", keybord_type);
 		break;
 	}
+	return 0;
 }

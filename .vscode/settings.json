@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "cmath": "c",
+        "*.tcc": "c",
+        "locale.h": "c",
+        "exception": "cpp",
+        "*.inc": "cpp",
+        "qtcoredepends": "cpp",
+        "qtdbusdepends": "cpp"
+    }
+}
